@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,9 +19,17 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
-// Sample route
-app.get('/', (req, res) => {
-  res.send('CryptexFxTrade API is running');
+// Serve frontend
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// API route
+app.get('/api', (req, res) => {
+  res.json({ message: 'CryptexFxTrade API is running' });
+});
+
+// Catch-all route to serve frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // Start server
